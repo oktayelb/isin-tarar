@@ -1,22 +1,12 @@
 #pragma once
 
+#include "vector3d.h"
+#include "color.h"
 #include <string>
 #include <vector>
 
 
 namespace parser {
-
-    struct Vec3f {
-        float x;
-        float y;
-        float z;
-    };
-
-    struct Vec3i {
-        int x;
-        int y;
-        int z;
-    };
 
     struct NearPlane {
         float left;
@@ -26,9 +16,9 @@ namespace parser {
     };
 
     struct CameraConfig {
-        Vec3f position;
-        Vec3f gaze;
-        Vec3f up;
+        Vector3D position;
+        Vector3D gaze;
+        Vector3D up;
         NearPlane near_plane;
         float near_distance;
         int image_width;
@@ -37,16 +27,16 @@ namespace parser {
     };
 
     struct PointLightConfig {
-        Vec3f position;
-        Vec3f intensity;
+        Vector3D position;
+        Color intensity;
     };
 
     struct MaterialConfig {
         bool is_mirror;
-        Vec3f ambient_reflectance;
-        Vec3f diffuse_reflectance;
-        Vec3f specular_reflectance;
-        Vec3f mirror_reflectance;
+        Color ambient_reflectance;
+        Color diffuse_reflectance;
+        Color specular_reflectance;
+        Color mirror_reflectance;
         float phong_exponent;
     };
 
@@ -75,26 +65,26 @@ namespace parser {
     struct PlaneConfig {
         int material_index;
         int center_index;
-        Vec3f normal;
+        Vector3D normal;
     };
 
     struct CylinderConfig {
         int material_index;
         int center_index;
-        Vec3f axis;
+        Vector3D axis;
         float radius;
         float height;
     };
 
     struct SceneConfig {
-        Vec3i background_color;
+        Color background_color;
         float shadow_ray_epsilon;
         int max_recursion_depth;
         std::vector<CameraConfig> cameras;
-        Vec3f ambient_light;
+        Color ambient_light;
         std::vector<PointLightConfig> point_lights;
         std::vector<MaterialConfig> materials;
-        std::vector<Vec3f> vertices;
+        std::vector<Vector3D> vertices;
         std::vector<MeshConfig> meshes;
         std::vector<TriangleConfig> triangles;
         std::vector<SphereConfig> spheres;

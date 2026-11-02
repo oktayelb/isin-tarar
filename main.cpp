@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "camera.h"
 
 class Surface{
 
@@ -27,7 +28,7 @@ class PlaneSurface    : public Surface {};
 
 
 using InputFile = std::string;
-
+ 
 int main(int argc, char* argv[]){
 
     if (argc != 2) {

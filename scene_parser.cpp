@@ -84,14 +84,14 @@ namespace parser {
             return read_numbers<int>(object, key, 1)[0];
         }
 
-        Vec3f read_vec3f(const json::Value& object, const std::string& key) {
+        Vector3D read_vector(const json::Value& object, const std::string& key) {
             std::vector<float> numbers = read_numbers<float>(object, key, 3);
-            return Vec3f{numbers[0], numbers[1], numbers[2]};
+            return Vector3D(numbers[0], numbers[1], numbers[2]);
         }
 
-        Vec3i read_vec3i(const json::Value& object, const std::string& key) {
-            std::vector<int> numbers = read_numbers<int>(object, key, 3);
-            return Vec3i{numbers[0], numbers[1], numbers[2]};
+        Color read_color(const json::Value& object, const std::string& key) {
+            std::vector<float> numbers = read_numbers<float>(object, key, 3);
+            return Color(numbers[0], numbers[1], numbers[2]);
         }
 
         int id_to_index(int id, size_t element_count, const std::string& element_kind) {
@@ -111,9 +111,9 @@ namespace parser {
 
         CameraConfig parse_camera(const json::Value& element) {
             CameraConfig camera;
-            camera.position = read_vec3f(element, "Position");
-            camera.gaze = read_vec3f(element, "Gaze");
-            camera.up = read_vec3f(element, "Up");
+            camera.position = read_vector(element, "Position");
+            camera.gaze = read_vector(element, "Gaze");
+            camera.up = read_vector(element, "Up");
 
             std::vector<float> near_plane = read_numbers<float>(element, "NearPlane", 4);
             camera.near_plane.left = near_plane[0];
@@ -133,8 +133,8 @@ namespace parser {
 
         PointLightConfig parse_point_light(const json::Value& element) {
             PointLightConfig light;
-            light.position = read_vec3f(element, "Position");
-            light.intensity = read_vec3f(element, "Intensity");
+            light.position = read_vector(element, "Position");
+            light.intensity = read_color(element, "Intensity");
             return light;
         }
 
@@ -143,22 +143,22 @@ namespace parser {
             const json::Value* type = element.find("_type");
             material.is_mirror = type != nullptr && type->text == "mirror";
 
-            material.ambient_reflectance = read_vec3f(element, "AmbientReflectance");
-            material.diffuse_reflectance = read_vec3f(element, "DiffuseReflectance");
-            material.specular_reflectance = read_vec3f(element, "SpecularReflectance");
+            material.ambient_reflectance = read_color(element, "AmbientReflectance");
+            material.diffuse_reflectance = read_color(element, "DiffuseReflectance");
+            material.specular_reflectance = read_color(element, "SpecularReflectance");
 
             if (element.find("MirrorReflectance") != nullptr) {
-                material.mirror_reflectance = read_vec3f(element, "MirrorReflectance");
+                material.mirror_reflectance = read_color(element, "MirrorReflectance");
             } else {
-                material.mirror_reflectance = Vec3f{0.0f, 0.0f, 0.0f};
+                material.mirror_reflectance = Color(0.0f, 0.0f, 0.0f);
             }
 
             material.phong_exponent = read_float(element, "PhongExponent");
             return material;
         }
 
-        std::vector<Vec3f> parse_vertices(const json::Value& scene) {
-            std::vector<Vec3f> vertices;
+        std::vector<Vector3D> parse_vertices(const json::Value& scene) {
+            std::vector<Vector3D> vertices;
             const json::Value* vertex_data = scene.find("VertexData");
             if (vertex_data == nullptr) {
                 return vertices;
@@ -169,7 +169,7 @@ namespace parser {
                 throw std::runtime_error("VertexData must contain three coordinates per vertex");
             }
             for (size_t i = 0; i < coordinates.size(); i += 3) {
-                vertices.push_back(Vec3f{coordinates[i], coordinates[i + 1], coordinates[i + 2]});
+                vertices.push_back(Vector3D(coordinates[i], coordinates[i + 1], coordinates[i + 2]));
             }
             return vertices;
         }
@@ -209,7 +209,7 @@ namespace parser {
             PlaneConfig plane;
             plane.material_index = id_to_index(read_int(element, "Material"), material_count, "material");
             plane.center_index = id_to_index(read_int(element, "Center"), vertex_count, "vertex");
-            plane.normal = read_vec3f(element, "Normal");
+            plane.normal = read_vector(element, "Normal");
             return plane;
         }
 
@@ -217,7 +217,7 @@ namespace parser {
             CylinderConfig cylinder;
             cylinder.material_index = id_to_index(read_int(element, "Material"), material_count, "material");
             cylinder.center_index = id_to_index(read_int(element, "Center"), vertex_count, "vertex");
-            cylinder.axis = read_vec3f(element, "Axis");
+            cylinder.axis = read_vector(element, "Axis");
             cylinder.radius = read_float(element, "Radius");
             cylinder.height = read_float(element, "Height");
             return cylinder;
@@ -229,7 +229,7 @@ namespace parser {
         const json::Value& scene = document.require("Scene");
 
         SceneConfig config;
-        config.background_color = read_vec3i(scene, "BackgroundColor");
+        config.background_color = read_color(scene, "BackgroundColor");
         config.shadow_ray_epsilon = read_float(scene, "ShadowRayEpsilon");
         config.max_recursion_depth = read_int(scene, "MaxRecursionDepth");
 
@@ -240,10 +240,10 @@ namespace parser {
             throw std::runtime_error("scene file has no camera");
         }
 
-        config.ambient_light = Vec3f{0.0f, 0.0f, 0.0f};
+        config.ambient_light = Color(0.0f, 0.0f, 0.0f);
         const json::Value* lights = scene.find("Lights");
         if (lights != nullptr && lights->find("AmbientLight") != nullptr) {
-            config.ambient_light = read_vec3f(*lights, "AmbientLight");
+            config.ambient_light = read_color(*lights, "AmbientLight");
         }
         for (const json::Value* element : find_elements(scene, "Lights", "PointLight")) {
             config.point_lights.push_back(parse_point_light(*element));
