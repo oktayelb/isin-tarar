@@ -2,7 +2,7 @@
 #include "shapes.h"
 
 Scene::Scene(const parser::SceneConfig& config) {
-    const std::vector<Vector3D>& v = config.vertices;   // parser already turned IDs into 0-based indices
+    const std::vector<Vector3D>& v = config.vertices; 
 
     for (const parser::SphereConfig& sphere : config.spheres) {
         surfaces.emplace_back(new Sphere(v[sphere.center_index], sphere.radius, sphere.material_index));
