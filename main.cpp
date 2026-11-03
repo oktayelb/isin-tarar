@@ -6,25 +6,7 @@
 #include <string>
 #include <vector>
 #include "camera.h"
-
-class Surface{
-
-
-};
-
-
-
-
-class CylinderSurface : public Surface {};
-
-class TriangleSurface : public Surface {};
-
-class SphereSurface   : public Surface {};
-
-class MeshSurface     : public Surface {};
-
-class PlaneSurface    : public Surface {};
-
+#include "surface.h"
 
 
 using InputFile = std::string;
