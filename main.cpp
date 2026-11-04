@@ -1,12 +1,12 @@
 #include "scene_parser.h"
 #include "ppm_writer.h"
 #include "vector3d.h"
-#include "color.h"
-#include <iostream>
-#include <string>
-#include <vector>
 #include "camera.h"
 #include "surface.h"
+#include "tracer.h"
+#include <string>
+#include <vector>
+#include <iostream>
 
 
 using InputFile = std::string;
