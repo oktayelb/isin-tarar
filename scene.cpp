@@ -32,7 +32,6 @@ Scene::Scene(const parser::SceneConfig& config) {
     }
 }
 
-// Test every surface; each time one is closer, shrink t_max so later tests can exit early.
 bool Scene::closest_hit(const Ray& ray, float t_min, float t_max, HitRecord& hit) const {
     bool found = false;
     for (const std::unique_ptr<Surface>& surface : surfaces) {
@@ -45,9 +44,8 @@ bool Scene::closest_hit(const Ray& ray, float t_min, float t_max, HitRecord& hit
 }
 
 bool Scene::any_hit(const Ray& ray, float t_min, float t_max) const {
-    HitRecord ignored;
     for (const std::unique_ptr<Surface>& surface : surfaces) {
-        if (surface->intersect(ray, t_min, t_max, ignored)) {
+        if (surface->any_hit(ray, t_min, t_max)) {
             return true;
         }
     }
