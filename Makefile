@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -O3 -Wall -Wextra
+CXXFLAGS = -std=c++17 -O3 -Wall -Wextra -pthread
 
 SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
