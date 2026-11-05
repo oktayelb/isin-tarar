@@ -21,12 +21,23 @@ int main(int argc, char* argv[]){
     InputFile scene_file = argv[1];
     parser::SceneConfig config = parser::parse(scene_file);
 
-    // loop where we create the scene
+        auto scene = Scene(config);
+    auto tracer = Tracer(scene, config);
 
 
 
     for (const parser::CameraConfig& camera_config : config.cameras) {
-        std::vector<float> rgb_values(static_cast<size_t>(camera_config.image_width) * camera_config.image_height * 3);
+        auto camera = Camera(camera_config);
+        for (int i = 0; i < camera_config.image_height; i++){
+            for (int j = 0; j < camera_config.image_width; j++){
+
+                auto ray = camera.shoot_ray(i,j);
+                auto color_at_pixel = tracer.trace(ray,0);
+                
+                
+            }
+        }
+
         output::save(camera_config.image_name, camera_config.image_width, camera_config.image_height, rgb_values);
     }
 
