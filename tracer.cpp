@@ -29,22 +29,20 @@ Color Tracer::shade(const Ray& ray, const HitRecord& hit, int depth) const {
     auto v = -(ray.direction).normalize();
     for ( auto light : config.point_lights){
 
-        if (is_shadowed(hit.point, hit.normal, light.position))
-            continue;
 
-        auto to_light = light.position - hit.point;
-        auto d = to_light.length();
-        auto irradiance  =  light.intensity* (1.0f / (d*d));
-        auto normalized_to_light = to_light.normalize();
+        const auto to_light = light.position - hit.point;
+        const auto normalized_to_light = to_light.normalize();
         auto angle = dot_product(hit.normal,normalized_to_light);
         if (angle  <= 0)
             continue;
-        result_color = result_color + material.diffuse_reflectance*irradiance*angle;
-    
+        if (is_shadowed(hit.point, hit.normal, light.position))
+            continue;
 
+        auto d = to_light.length();
+        auto irradiance  =  light.intensity* (1.0f / (d*d));
         auto h = (normalized_to_light + v).normalize();
-
-        result_color = result_color +  material.specular_reflectance*irradiance*pow(std::max(0.0f,dot_product(hit.normal,h)),material.phong_exponent);
+        
+        result_color = result_color + material.diffuse_reflectance*irradiance*angle +  material.specular_reflectance*irradiance*pow(std::max(0.0f,dot_product(hit.normal,h)),material.phong_exponent);
 
   }
 
