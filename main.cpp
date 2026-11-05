@@ -27,6 +27,7 @@ int main(int argc, char* argv[]){
 
 
     for (const parser::CameraConfig& camera_config : config.cameras) {
+        std::vector<Color> rgb_values(camera_config.image_height*camera_config.image_width);
         auto camera = Camera(camera_config);
         for (int i = 0; i < camera_config.image_height; i++){
             for (int j = 0; j < camera_config.image_width; j++){
@@ -34,6 +35,7 @@ int main(int argc, char* argv[]){
                 auto ray = camera.shoot_ray(i,j);
                 auto color_at_pixel = tracer.trace(ray,0);
                 
+                rgb_values[i*camera_config.image_width +j] = color_at_pixel;
                 
             }
         }
