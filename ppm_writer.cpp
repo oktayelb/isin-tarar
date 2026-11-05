@@ -22,10 +22,10 @@ namespace output {
         }
     }
 
-    void save(const std::string& file_name, int width, int height, const std::vector<float>& rgb_values) {
-        size_t values_per_row = static_cast<size_t>(width) * 3;
-        if (rgb_values.size() != values_per_row * height) {
-            throw std::runtime_error("rgb_values must hold width * height * 3 values for " + file_name);
+    void save(const std::string& file_name, int width, int height, const std::vector<Color>& pixels) {
+        size_t expected_count = static_cast<size_t>(width) * height;
+        if (pixels.size() != expected_count) {
+            throw std::runtime_error("pixels must hold width * height values for " + file_name);
         }
 
         std::ofstream file(file_name);
@@ -34,13 +34,13 @@ namespace output {
         }
 
         file << "P3\n" << width << " " << height << "\n255\n";
-        for (size_t i = 0; i < rgb_values.size(); i++) {
-            file << to_color_value(rgb_values[i]);
-            bool is_last_value_of_row = (i + 1) % values_per_row == 0;
-            if (is_last_value_of_row) {
-                file << '\n';
-            } else {
-                file << ' ';
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                const Color& pixel = pixels[static_cast<size_t>(row) * width + column];
+                file << to_color_value(pixel.r) << ' '
+                     << to_color_value(pixel.g) << ' '
+                     << to_color_value(pixel.b);
+                file << (column + 1 == width ? '\n' : ' ');
             }
         }
 
