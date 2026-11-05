@@ -21,6 +21,10 @@ public:
 
     Surface(int index){this->material_index= index;}
     virtual bool intersect(const Ray& ray, float t_min, float t_max, HitRecord& record) const = 0;
+   virtual bool any_hit(const Ray& ray, float t_min, float t_max) const {
+        HitRecord ignored;
+        return intersect(ray, t_min, t_max, ignored);
+    }
     virtual ~Surface(){}
 
 
